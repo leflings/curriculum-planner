@@ -1,0 +1,9 @@
+obj/
+bin/
+Parser.fs
+Lexer.fs
+*.suo
+*.dll
+*.dylib
+*.so
+Microsoft.Z3.xml
