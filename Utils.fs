@@ -1,23 +1,74 @@
 ﻿module Utils
 
+open System
 open Types
-open FileParser
-
-let isClash a b = a = b || 10 = abs ((max a b)/(min a b))
-
-let countClashes cmap maybeConstraints selection =
-    List.fold
-        (fun acc e ->
-            let zc = (Map.find e cmap).Placement |> toZCode
-            if List.exists (isClash zc) maybeConstraints then acc + 1 else acc) 0 selection
 
 let rec choices = function
   | []      -> []
-  | p::tail -> (p,tail) :: [ for (y,l) in choices tail -> (y,l) ];;
+  | x::xs -> (x,xs) :: [ for (a,b) in choices xs -> (a,b) ];;
 
-let rec combinations S k =
-    [ if k=0 then yield [] else
-            for (e,r) in choices S do
-                for o in combinations r (k-1) do yield e::o  ];;
+let rec combinations xs i =
+    [ if i=0 then yield [] else
+            for (e,r) in choices xs do
+                for o in combinations r (i-1) do yield e::o  ];;
 
-let allCombinations S = [] :: [ for i in 1..(List.length S) do yield! combinations S i ] |> List.rev
+let allCombinations xs = [] :: [ for i in 1..(List.length xs) do yield! combinations xs i ] |> List.rev
+
+let toZECTS (f:float) = int (f/2.5)
+
+let fromZECTS i = float(i)*2.5
+
+let toCode (str : string) = 
+    let code (s:string) =
+        match s.Substring(1) with
+        | "1A" -> (1, A)
+        | "1B" -> (1, B)
+        | "2A" -> (2, A)
+        | "2B" -> (2, B)
+        | "3A" -> (3, A)
+        | "3B" -> (3, B)
+        | "4A" -> (4, A)
+        | "4B" -> (4, B)
+        | "5A" -> (5, A)
+        | "5B" -> (5, B)
+        | "1" -> (1, X)
+        | "2" -> (2, X)
+        | "3" -> (3, X)
+        | "4" -> (4, X)
+        | "5" -> (5, X)
+        | _ -> failwithf "unrecognized code: %s" str
+    match str.[0] with
+    | 'F' -> F (code str)
+    | 'E' -> E (code str)
+    | _ -> failwithf "unrecognized code: %s" str
+
+
+let toZCode (c:Code) =
+    match c with
+    | E(i, p) | F(i, p) ->
+        match p with
+        | A -> i
+        | B -> -i
+        | X -> i*10
+
+let fromZCode i =
+    if i >= 10
+    then
+        F(i/10, X)
+    else
+        F(i, if i > 0 then A else B)
+
+let fromCode c =
+    let period = function | A -> "A" | B -> "B" | X -> ""
+    match c with
+    | F(i,p) -> sprintf "F%d%s" i (period p)
+    | E(i,p) -> sprintf "E%d%s" i (period p)
+
+let toNumber (s:string) = Convert.ToInt32(s)
+let fromNumber i = sprintf "%05d" i
+
+let toZCourse (a : Course) = { ZNo = toNumber a.CourseNo; ZCode = toZCode a.Placement; ZECTS = toZECTS a.ECTS }
+let fromZCourse (a : ZCourse) = { CourseNo = fromNumber a.ZNo; CourseName = ""; Placement = fromZCode a.ZCode; ECTS = fromZECTS a.ZECTS }
+
+let toZEncoding xs = List.map toZCourse xs
+let fromZEncoding xs = List.map fromZCourse xs

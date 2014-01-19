@@ -62,10 +62,10 @@
   <ItemGroup>
     <Content Include="README.txt" />
     <Compile Include="Types.fs" />
+    <Compile Include="Utils.fs" />
     <Compile Include="FileParser.fs" />
     <Compile Include="Scheduler.fs" />
     <Compile Include="Nqueens.fs" />
-    <Compile Include="Utils.fs" />
     <Compile Include="Program.fs" />
     <Compile Include="Main.fs" />
     <None Include="z3.dll">
