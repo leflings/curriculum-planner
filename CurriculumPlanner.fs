@@ -29,6 +29,7 @@ let rec findFirst (ls : seq<string list> list) =
 
 let planMasterStudy =
     let fall1 = Semester(Spring("Fall 14", (25.0,30.0)), ([F(1,A);F(2,A)],[F(3,B);F(4,B)]), Set.empty)
+//    let fall1 = Semester(Spring("Fall 14", (55.0,60.0)), ([],[]), Set.empty)
     let jan1 = Semester(January("January 15", (5.0,5.0)), ([],[]), Set.empty)
     let spring1 = Semester(Spring("Spring 15", (25.0,30.0)), ([],[]), Set.empty)
     let june1 = Semester(June("June 15", (5.0,5.0)), ([],[]), Set.empty)
@@ -37,17 +38,20 @@ let planMasterStudy =
 
     let semesters = [fall1; jan1; spring1; june1; fall2; jan2]
 
-    let courselist = readFromFile "big.csv"
+//    let courselist = readFromFile "big.csv"
+    let courselist = readFromFileWithPrereqs "big-with-prereqs.csv" |> List.rev
     let coursemap = courselist |> List.map (fun e -> (e.CourseNo, e)) |> Map.ofList
     let courseset = courselist |> Set.ofList
     let (woPrereqs, wPrereqs) = courseset |> Set.partition (fun e -> e.Prereqs = [])
 
     let planSemester (acc,(completed, eligible, ineligible)) semester =
+        // Move courses from ineligible to eligible based on the list of completed courses
         let (eligible', ineligible') =
             let (a,b) = ineligible |> Set.partition (fun e -> let pset = Set.ofList e.Prereqs
                                                               Set.isSubset pset completed)
             (Set.union a eligible, b)
 
+        // Bake in arguments for the scheduler
         let scheduler = schedule (toZEncoding (Set.toList eligible')) (semesterECTS semester)
 
         // Makes a scheduler for all combinations of constraints. First in the list, is the one
@@ -60,11 +64,14 @@ let planMasterStudy =
         // The Courses of prior list
         let choice = chosenNumbers |> List.map (fun e -> Map.find e coursemap) |> Set.ofList 
 
+        // Remove chosen courses from eligible pile
         let eligible'' = Set.difference eligible' choice
+        // Add chosen course numbers to list of completed courses
         let completed' = Set.union completed (Set.ofList chosenNumbers)
+        // Add the updated semester to the accumulator
         let acc' = (setSemesterCourses semester choice) :: acc
         (acc', (completed', eligible'', ineligible'))
 
     let semesters' = List.fold planSemester ([], (Set.empty, woPrereqs, wPrereqs)) semesters
 
-    fst semesters'
+    fst semesters' |> List.rev

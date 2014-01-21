@@ -20,8 +20,19 @@ let convert (lines : string list) =
                         let ects = Convert.ToDouble(e)
                         { CourseNo = cno; CourseName = n; Code = (toCode p); ECTS = ects; Prereqs = [] }
                     | _ -> failwith "incorrect format")
+
+let convertWithPrereqs (lines : string list) =
+    lines
+    |> List.map (fun s ->
+                    s.Split([|','|])
+                    |> function
+                    | [|cno; n; p; e; pre|] ->
+                        let ects = Convert.ToDouble(e)
+                        { CourseNo = cno; CourseName = n; Code = (toCode p); ECTS = ects; Prereqs = pre.Split([|';'|]) |> List.ofArray |> List.filter (not << String.IsNullOrWhiteSpace) }
+                    | _ -> failwith "incorrect format")
         
 let readFromFile = readlines >> cleanlines >> convert
+let readFromFileWithPrereqs = readlines >> cleanlines >> convertWithPrereqs
 
 let readConstraints filename =
     let lines =

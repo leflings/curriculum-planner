@@ -43,8 +43,9 @@ let main argv =
 //
 //    let selectedCourses = List.map (fun e -> Map.find e cmap) first
 //    List.iter (printfn "%A") selectedCourses
-    let semesters = planMasterStudy |> List.rev
-    List.iter (fun (Semester(s,c,cs)) -> printfn "\n%A" s; Set.iter (printfn "%A") cs) semesters
+    let semesters = planMasterStudy
+    List.iter printSemester semesters
+//    List.iter (fun (Semester(s,c,cs)) -> printfn "\n%A" s; Set.iter (printfn "%A") cs) semesters
     System.Console.ReadLine() |> ignore
     0
     
