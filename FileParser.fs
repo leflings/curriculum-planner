@@ -15,11 +15,10 @@ let convert (lines : string list) =
     lines
     |> List.map (fun s ->
                     s.Split([|','|])
-                    |> List.ofArray
                     |> function
-                    | [cno; n; p; e] ->
+                    | [|cno; n; p; e|] ->
                         let ects = Convert.ToDouble(e)
-                        { CourseNo = cno; CourseName = n; Placement = (toCode p); ECTS = ects }
+                        { CourseNo = cno; CourseName = n; Code = (toCode p); ECTS = ects; Prereqs = [] }
                     | _ -> failwith "incorrect format")
         
 let readFromFile = readlines >> cleanlines >> convert

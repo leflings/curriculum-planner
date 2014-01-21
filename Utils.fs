@@ -20,23 +20,9 @@ let fromZECTS i = float(i)*2.5
 
 let toCode (str : string) = 
     let code (s:string) =
-        match s.Substring(1) with
-        | "1A" -> (1, A)
-        | "1B" -> (1, B)
-        | "2A" -> (2, A)
-        | "2B" -> (2, B)
-        | "3A" -> (3, A)
-        | "3B" -> (3, B)
-        | "4A" -> (4, A)
-        | "4B" -> (4, B)
-        | "5A" -> (5, A)
-        | "5B" -> (5, B)
-        | "1" -> (1, X)
-        | "2" -> (2, X)
-        | "3" -> (3, X)
-        | "4" -> (4, X)
-        | "5" -> (5, X)
-        | _ -> failwithf "unrecognized code: %s" str
+        let i = s.Substring(1,1) |> Convert.ToInt32
+        let p = s.Substring(2) |> function | "A" -> A | "B" -> B | _ -> X
+        (i,p)
     match str.[0] with
     | 'F' -> F (code str)
     | 'E' -> E (code str)
@@ -67,8 +53,8 @@ let fromCode c =
 let toNumber (s:string) = Convert.ToInt32(s)
 let fromNumber i = sprintf "%05d" i
 
-let toZCourse (a : Course) = { ZNo = toNumber a.CourseNo; ZCode = toZCode a.Placement; ZECTS = toZECTS a.ECTS }
-let fromZCourse (a : ZCourse) = { CourseNo = fromNumber a.ZNo; CourseName = ""; Placement = fromZCode a.ZCode; ECTS = fromZECTS a.ZECTS }
+let toZCourse (a : Course) = { ZNo = toNumber a.CourseNo; ZCode = toZCode a.Code; ZECTS = toZECTS a.ECTS }
+let fromZCourse (a : ZCourse) = { CourseNo = fromNumber a.ZNo; CourseName = ""; Code = fromZCode a.ZCode; ECTS = fromZECTS a.ZECTS; Prereqs= [] }
 
 let toZEncoding xs = List.map toZCourse xs
 let fromZEncoding xs = List.map fromZCourse xs

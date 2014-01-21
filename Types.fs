@@ -1,13 +1,31 @@
 ﻿module Types
 
-type Period =
+type Subcode =
     | A
     | B
     | X
 
 type Code =
-    | E of int * Period
-    | F of int * Period
+    | E of int * Subcode
+    | F of int * Subcode
 
-type Course = { CourseNo: string; CourseName: string; Placement: Code; ECTS: float }
-type ZCourse = { ZNo: int; ZCode: int; ZECTS: int }
+type Course =
+    { CourseNo: string;
+     CourseName: string;
+     Code: Code;
+     ECTS: float;
+     Prereqs: string list }
+
+type ZCourse = { ZNo: int;
+                ZCode: int;
+                ZECTS: int } 
+
+type Period =
+    | Spring of string * (float * float)
+    | Fall of string * (float * float)
+    | January of string * (float * float)
+    | June of string * (float * float)
+type Semester =
+    | Semester of Period * (Code list * Code list) * Set<Course> // Period * (Hard constraints * Soft constraints) * Courses
+type MasterStudy =
+    | MasterStudy of Semester list
