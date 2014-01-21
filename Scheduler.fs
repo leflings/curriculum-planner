@@ -64,7 +64,7 @@ module Helpers =
 
 open Helpers
 let schedule courselist (minECTS, maxECTS) constraints =
-//    if List.isEmpty courselist then seq[[]] else
+    if List.isEmpty courselist then seq[None] else
     let sum = ctx.MkIntConst("ectssum")
     let cs = courses courselist
     let solver = ctx.MkSolver()
@@ -86,6 +86,6 @@ let schedule courselist (minECTS, maxECTS) constraints =
             let assignments = [| for c in cs -> ctx.MkEq(c, m.Evaluate(c, true)) |]
             solver.Assert(ctx.MkNot(ctx.MkAnd assignments))
             printfn "%A" chosen
-            chosen
-        | _ -> []
+            Some chosen
+        | _ -> None
     Seq.cache (Seq.initInfinite yielder)

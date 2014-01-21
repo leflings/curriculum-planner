@@ -43,7 +43,7 @@ let main argv =
 //
 //    let selectedCourses = List.map (fun e -> Map.find e cmap) first
 //    List.iter (printfn "%A") selectedCourses
-    let fall1 = Semester(Spring("Fall 14", (25.0,30.0)), ([F(1,A);F(2,A)],[F(3,B);F(4,B)]), Set.empty)
+    let fall1 = Semester(Fall("Fall 14", (25.0,30.0)), ([F(1,A);F(2,A)],[F(3,B);F(4,B)]), Set.empty)
 //    let fall1 = Semester(Spring("Fall 14", (55.0,60.0)), ([],[]), Set.empty)
     let jan1 = Semester(January("January 15", (5.0,5.0)), ([],[]), Set.empty)
     let spring1 = Semester(Spring("Spring 15", (25.0,30.0)), ([],[]), Set.empty)
