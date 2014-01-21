@@ -10,12 +10,13 @@ let readlines filename = System.IO.File.ReadAllLines(filename) |> List.ofArray
 let cleanlines lines =
     lines
     |> List.tail
-    |> List.filter (fun s -> not (String.IsNullOrEmpty s))
+    |> List.filter (fun s -> not (String.IsNullOrWhiteSpace s))
 
 let convert (lines : string list) =
     lines
     |> List.map (fun s ->
                     s.Split([|','|])
+                    |> Array.map (fun s -> s.Trim())
                     |> function
                     | [|cno; n; p; e|] ->
                         let ects = Convert.ToDouble(e)
@@ -32,6 +33,7 @@ let convertWithPrereqs (lines : string list) =
     lines
     |> List.map (fun s ->
                     s.Split([|','|])
+                    |> Array.map (fun s -> s.Trim())
                     |> function
                     | [|cno; n; p; e; pre|] ->
                         let ects = Convert.ToDouble(e)

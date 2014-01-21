@@ -20,14 +20,17 @@ module Encoding =
     let fromZECTS i = float(i)*2.5
 
     let toCode (str : string) = 
-        let code (s:string) =
-            let i = s.Substring(1,1) |> Convert.ToInt32
-            let p = s.Substring(2) |> function | "A" -> A | "B" -> B | _ -> X
-            (i,p)
-        match str.[0] with
-        | 'F' -> F (code str)
-        | 'E' -> E (code str)
-        | _ -> failwithf "unrecognized code: %s" str
+        match str with
+        | "Januar" -> Jan
+        | "Juni" -> Jun
+        | _ -> let code (s:string) =
+                   let i = s.Substring(1,1) |> Convert.ToInt32
+                   let p = s.Substring(2) |> function | "A" -> A | "B" -> B | _ -> X
+                   (i,p)
+               match str.[0] with
+               | 'F' -> F (code str)
+               | 'E' -> E (code str)
+               | _ -> failwithf "unrecognized code: %s" str
 
 
     let toZCode (c:Code) =
@@ -37,19 +40,22 @@ module Encoding =
             | A -> i
             | B -> -i
             | X -> i*10
+        | Jun -> -1000
+        | Jan -> -2000
 
     let fromZCode i =
-        if i >= 10
-        then
-            F(i/10, X)
-        else
-            F(i, if i > 0 then A else B)
+        match i with
+        | -1000 -> Jun
+        | -2000 -> Jan
+        | i -> if i >= 10 then F(i/10, X) else F(i, if i > 0 then A else B)
 
     let fromCode c =
         let period = function | A -> "A" | B -> "B" | X -> ""
         match c with
         | F(i,p) -> sprintf "F%d%s" i (period p)
         | E(i,p) -> sprintf "E%d%s" i (period p)
+        | Jan -> "Januar"
+        | Jun -> "Juni"
 
     let toNumber (s:string) = Convert.ToInt32(s)
     let fromNumber i = sprintf "%05d" i
@@ -77,6 +83,8 @@ module Semester =
         let pm = Array.init 5 (fun _ -> "")
         let setFromCode str c =
             match c with
+            | Jan | Jun -> Array.fill am 0 5 str
+                           Array.fill pm 0 5 str
             | F(i,p) | E(i,p) ->
                 match p with
                 | A -> if i % 2 <> 0
@@ -99,15 +107,10 @@ module Semester =
                        | _ -> failwith "Wrong code"
         let (period,cs,hard,soft) = match semester with | Semester(p,(h,s),cs) -> (p,cs,h,s)
 
-        match period with
-        | Spring _ | Fall _ ->
-            cs |> Set.iter (fun e -> let name = sprintf "%s" e.CourseNo
-                                     setFromCode name e.Code )
-            hard |> List.iter (setFromCode "H ")
-            soft |> List.iter (setFromCode "S ")
-        | June _ | January _ ->
-            cs |> Set.iter (fun e -> Array.fill am 0 5 e.CourseNo) 
-            cs |> Set.iter (fun e -> Array.fill pm 0 5 e.CourseNo) 
+        cs |> Set.iter (fun e -> let name = sprintf "%s" e.CourseNo
+                                 setFromCode name e.Code )
+        hard |> List.iter (setFromCode "H ")
+        soft |> List.iter (setFromCode "S ")
 
         let cw = 11
         let filler = String.replicate cw "-"

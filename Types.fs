@@ -8,6 +8,8 @@ type Subcode =
 type Code =
     | E of int * Subcode
     | F of int * Subcode
+    | Jan
+    | Jun
 
 type Course =
     { CourseNo: string;

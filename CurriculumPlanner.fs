@@ -24,10 +24,10 @@ module Helpers =
             match s with
             | Semester (p,_,_) ->
                 match p with
-                | Spring _ -> (fun (e:Course) -> match e.Code with | F _ -> true | E _ -> false)
-                | Fall _  -> (fun (e:Course) -> match e.Code with | F _ -> false | E _ -> true)
-                | January _ -> (fun (e:Course) -> match e.Code with | F _ -> true | E _ -> true)
-                | June _ -> (fun (e:Course) -> match e.Code with | F _ -> true | E _ -> true)
+                | Spring _ -> (fun (e:Course) -> match e.Code with | F _ -> true | _ -> false)
+                | Fall _  -> (fun (e:Course) -> match e.Code with | E _ -> true | _ -> false)
+                | January _ -> (fun (e:Course) -> match e.Code with | Jan _ -> true | _ -> false)
+                | June _ -> (fun (e:Course) -> match e.Code with | Jun _ -> true | _ -> false)
         List.filter f cs
 
 
