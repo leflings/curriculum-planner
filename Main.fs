@@ -10,7 +10,19 @@ open CurriculumPlanner
 let main argv =
     let courselist = coursesFromFileWithPrereqs "big-with-prereqs.csv"
 
-    let fall1 = Semester(Fall("Fall '14", (25.0,30.0)), ([F(1,A);F(2,A)],[F(3,B);F(4,B)]), Set.empty, [])
+    let fall1 =
+        Semester(
+            Fall( // Type of semester (Fall,Spring,June,January)
+                "Fall '14", // Name of semester
+                (25.0,30.0) // min max amount of ECTS that should be obtained
+            ),
+            (
+                [F(1,A)], // Hard constraints
+                [F(3,B);F(4,B)] // Soft constraints
+            ),
+            Set.empty, // The set of planned courses (updated after scheduling)
+            ["02342"] // List of numbers of mandatory courses / courses student wants to take
+        )
     let jan1 = Semester(January("January '15", (5.0,5.0)), ([],[]), Set.empty, [])
     let spring1 = Semester(Spring("Spring '15", (25.0,30.0)), ([],[]), Set.empty, ["02141"])
     let june1 = Semester(June("June '15", (5.0,5.0)), ([],[]), Set.empty, [])

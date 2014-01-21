@@ -25,7 +25,7 @@ let _ =
                 (25.0,30.0) // min max amount of ECTS that should be obtained
             ),
             (
-                [F(1,A);F(2,A)], // Hard constraints
+                [F(1,A)], // Hard constraints
                 [F(3,B);F(4,B)] // Soft constraints
             ),
             Set.empty, // The set of planned courses (updated after scheduling)

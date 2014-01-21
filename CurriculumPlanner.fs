@@ -21,6 +21,7 @@ module Helpers =
                    | Some _ as t -> t
                    | None -> findFirst xs
 
+    /// Filters the list of courses based on the semester period
     let filterCourses s cs =
         let f = match s with
                 | Semester (p,_,_,_) ->
@@ -31,6 +32,7 @@ module Helpers =
                     | June _ -> (fun (e:Course) -> match e.Code with | Jun _ -> true | _ -> false)
         List.filter f cs
 
+    /// Checks if any mandatory courses are defined, and if so, updates the ZCourse record for those
     let checkMandatory mset ls =
         if Set.isEmpty mset then ls else
         List.map (fun e -> 
@@ -80,7 +82,10 @@ let planSemesters courselist semesters =
         // Add chosen course numbers to list of completed courses
         let completed' = Set.union completed (Set.ofList chosenNumbers)
         // Add the updated semester to the accumulator
-        let acc' = (Semester.setCourses semester courses) :: acc
+        let semester' = if Set.isEmpty courses 
+                        then (Semester.setName semester ((Semester.getName semester) + " - NOT ABLE TO SCHEDULE"))
+                        else (Semester.setCourses semester courses)
+        let acc' = semester' :: acc
 
         (acc', (completed', eligible'', ineligible'))
 

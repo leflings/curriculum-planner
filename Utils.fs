@@ -79,6 +79,14 @@ module Semester =
     let getCourses = function | Semester(_,_,cs,_) -> cs
     let setCourses s cs = match s with | Semester(p,c,_,m) -> Semester(p,c,cs,m) 
     let getName (s : Semester) = match s with | Semester(p,_,_,_) -> match p with | Spring(n,_) | Fall(n,_) | January(n,_) | June(n,_) -> n
+    let setName (s : Semester) str =
+        match s with
+        | Semester(p,c,cs,m) ->
+            match p with
+            | Spring(n,ects) -> Semester(Spring(str,ects),c,cs,m)
+            | Fall(n,ects) -> Semester(Fall(str,ects),c,cs,m)
+            | June(n,ects) -> Semester(June(str,ects),c,cs,m)
+            | January(n,ects) -> Semester(January(str,ects),c,cs,m)
 
     let isFilled s =
         let (el, eh) = getECTS s
@@ -120,7 +128,7 @@ module Semester =
         hard |> List.iter (setFromCode "H ")
         soft |> List.iter (setFromCode "S ")
 
-        let cw = 12
+        let cw = 11
         let filler = String.replicate cw "-"
         let delimiterPattern =
             let f = String.replicate cw "-"
