@@ -1,11 +1,11 @@
-Course Number, Course Name, Schedule Code, ECTS
-02141,Computer Science Modelling,F4,10
-02180,Introduction to Artificial Intelligence,F3A,5
-02204,Design of Asynchronous Circuits,F2A,5
-02205,VLSI Design,F5B,5
-02211,Advanced computer architecture,F4A,5
-02220,Distributed systems,F1B,7.5
-02224,Real-Time Systems,F2B,5
-02233,Network Security,F4A,5
-02241,Robust Software Systems,F2B,5
-02333,Parallel and Real-time Systems,F1,10
+Course Number , Course Name                             , Schedule Code , ECTS
+02141         , Computer Science Modelling              , F4            , 10
+02180         , Introduction to Artificial Intelligence , F3A           , 5
+02204         , Design of Asynchronous Circuits         , F2A           , 5
+02205         , VLSI Design                             , F5B           , 5
+02211         , Advanced computer architecture          , F4A           , 5
+02220         , Distributed systems                     , F1B           , 7.5
+02224         , Real-Time Systems                       , F2B           , 5
+02233         , Network Security                        , F4A           , 5
+02241         , Robust Software Systems                 , F2B           , 5
+02333         , Parallel and Real-time Systems          , F1            , 10

@@ -86,7 +86,7 @@ let schedule courselist (minECTS, maxECTS) constraints =
             let chosen = [ for c in cs do
                             let b = m.Evaluate(incl c, true).IsTrue
                             let n = Convert.ToInt32(m.Evaluate(number c, true).ToString())
-                            if b then yield sprintf "%05d" n else () ]
+                            if b then yield Encoding.fromNumber n else () ]
             let assignments = [| for c in cs -> ctx.MkEq(c, m.Evaluate(c, true)) |]
             solver.Assert(ctx.MkNot(ctx.MkAnd assignments))
             //printfn "%A" chosen

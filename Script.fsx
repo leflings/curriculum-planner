@@ -16,7 +16,7 @@ System.IO.Directory.SetCurrentDirectory __SOURCE_DIRECTORY__
 #time "on";;
 
 let _ = 
-    let courselist = readFromFileWithPrereqs "big-with-prereqs.csv"
+    let courselist = coursesFromFileWithPrereqs "big-with-prereqs.csv"
 
     let fall1 =
         Semester(

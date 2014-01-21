@@ -1,49 +1,49 @@
-Course Number, Course Name, Schedule Code, ECTS
-02102,Introductory Programming,F3A,5
-02105,Algorithms and Data Structures 1,F2B,5
-02139,Digital Electronics 2,F1B,5
-02141,Computer Science Modelling,F4,10
-02142,Semantics and Inference Systems,F4A,5
-02161,Software Engineering 1,F2A,5
-02180,Introduction to Artificial Intelligence,F3A,5
-02204,Design of Asynchronous Circuits,F2A,5
-02205,VLSI Design,F5B,5
-02211,Advanced computer architecture,F4A,5
-02220,Distributed systems,F1B,7.5
-02224,Real-Time Systems,F2B,5
-02233,Network Security,F4A,5
-02241,Robust Software Systems,F2B,5
-02244,Language Based Security,F2A,7.5
-02263,Formal Aspects of Software Engineering,F4B,5
-02265,Advanced Topics in Software Engineering,F5B,5
-02281,Data logic,F2B,5
-02282,Algorithms for Massive Data Sets,F1A,7.5
-02285,Artificial intelligence and multi-agent systems,F4A,7.5
-02291,System integration,F5A,5
-02311,Digital systems,F4B,5
-02325,Data Communication,F4A,5
-02326,Algorithms and Data Structures,F2B,5
-02333,Parallel and Real-time Systems,F1,10
-02341,Model-based software engineering,F4B,5
-02342,Distributed Systems,F3A,5
-02421,Stochastic Adaptive Control,F3,10
-02424,Advanced Dataanalysis and Statistical Modelling,F2A,5
-02452,Audio Information Processing Systems,F5A,5
-02458,Cognitive Modelling,F2B,5
-02459,Machine Learning for Signal Processing,F1B,5
-02504,Computer Vision,F3B,5
-02506,Advanced Image Analysis,F5B,5
-02511,Introduction to Medical Image Analysis,F5,10
-02526,Mathematical Modeling,F3A,5
-02564,Real-Time Graphics,F1B,5
-02565,Computer Animation and Modelling,F2,10
-02576,Physically Based Rendering,F1A,5
-02582,Computational Data Analysis,F4A,5
-02612,Constrained Optimization,F4A,5
-02616,Large-scale Modelling,F3A,5
-02637,Advanced Matlab Programming,F2B,5
-02673,Computational Geoscience,F5B,5
-02693,Programming,F3A,5
-02814,Agile digital media development,F4B,5
-02822,Social data modeling,F3A,5
-02827,Mobile Application Prototyping,F5,10
+Course Number , Course Name                                     , Schedule Code , ECTS
+02102         , Introductory Programming                        , F3A           , 5
+02105         , Algorithms and Data Structures 1                , F2B           , 5
+02139         , Digital Electronics 2                           , F1B           , 5
+02141         , Computer Science Modelling                      , F4            , 10
+02142         , Semantics and Inference Systems                 , F4A           , 5
+02161         , Software Engineering 1                          , F2A           , 5
+02180         , Introduction to Artificial Intelligence         , F3A           , 5
+02204         , Design of Asynchronous Circuits                 , F2A           , 5
+02205         , VLSI Design                                     , F5B           , 5
+02211         , Advanced computer architecture                  , F4A           , 5
+02220         , Distributed systems                             , F1B           , 7.5
+02224         , Real-Time Systems                               , F2B           , 5
+02233         , Network Security                                , F4A           , 5
+02241         , Robust Software Systems                         , F2B           , 5
+02244         , Language Based Security                         , F2A           , 7.5
+02263         , Formal Aspects of Software Engineering          , F4B           , 5
+02265         , Advanced Topics in Software Engineering         , F5B           , 5
+02281         , Data logic                                      , F2B           , 5
+02282         , Algorithms for Massive Data Sets                , F1A           , 7.5
+02285         , Artificial intelligence and multi-agent systems , F4A           , 7.5
+02291         , System integration                              , F5A           , 5
+02311         , Digital systems                                 , F4B           , 5
+02325         , Data Communication                              , F4A           , 5
+02326         , Algorithms and Data Structures                  , F2B           , 5
+02333         , Parallel and Real-time Systems                  , F1            , 10
+02341         , Model-based software engineering                , F4B           , 5
+02342         , Distributed Systems                             , F3A           , 5
+02421         , Stochastic Adaptive Control                     , F3            , 10
+02424         , Advanced Dataanalysis and Statistical Modelling , F2A           , 5
+02452         , Audio Information Processing Systems            , F5A           , 5
+02458         , Cognitive Modelling                             , F2B           , 5
+02459         , Machine Learning for Signal Processing          , F1B           , 5
+02504         , Computer Vision                                 , F3B           , 5
+02506         , Advanced Image Analysis                         , F5B           , 5
+02511         , Introduction to Medical Image Analysis          , F5            , 10
+02526         , Mathematical Modeling                           , F3A           , 5
+02564         , Real-Time Graphics                              , F1B           , 5
+02565         , Computer Animation and Modelling                , F2            , 10
+02576         , Physically Based Rendering                      , F1A           , 5
+02582         , Computational Data Analysis                     , F4A           , 5
+02612         , Constrained Optimization                        , F4A           , 5
+02616         , Large-scale Modelling                           , F3A           , 5
+02637         , Advanced Matlab Programming                     , F2B           , 5
+02673         , Computational Geoscience                        , F5B           , 5
+02693         , Programming                                     , F3A           , 5
+02814         , Agile digital media development                 , F4B           , 5
+02822         , Social data modeling                            , F3A           , 5
+02827         , Mobile Application Prototyping                  , F5            , 10

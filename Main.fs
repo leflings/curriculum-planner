@@ -5,12 +5,10 @@ open FileParser
 open Utils
 open Scheduler
 open CurriculumPlanner
-open Nqueens
-
 
 [<EntryPoint>]
 let main argv =
-    let courselist = readFromFileWithPrereqs "big-with-prereqs.csv"
+    let courselist = coursesFromFileWithPrereqs "big-with-prereqs.csv"
 
     let fall1 = Semester(Fall("Fall '14", (25.0,30.0)), ([F(1,A);F(2,A)],[F(3,B);F(4,B)]), Set.empty, [])
     let jan1 = Semester(January("January '15", (5.0,5.0)), ([],[]), Set.empty, [])
@@ -23,4 +21,3 @@ let main argv =
     List.iter Semester.printSemester semesters
     System.Console.ReadLine() |> ignore
     0
-    

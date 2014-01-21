@@ -16,7 +16,6 @@ let allCombinations xs = [] :: [ for i in 1..(List.length xs) do yield! combinat
 
 module Encoding =
     let toZECTS (f:float) = int (f/2.5)
-
     let fromZECTS i = float(i)*2.5
 
     let toCode (str : string) = 
@@ -83,7 +82,7 @@ module Semester =
 
     let isFilled s =
         let (el, eh) = getECTS s
-        let sum = match s with | Semester(_,_,s,_) -> s |> Set.toSeq |> Seq.sumBy (fun e -> e.ECTS)
+        let sum = s |> getCourses |> Set.toSeq |> Seq.sumBy (fun e -> e.ECTS)
         el <= sum && sum <= eh
 
     let printSemester (semester : Semester) = 
@@ -113,6 +112,7 @@ module Semester =
                        | 5 -> am.[2] <- str + am.[2]; pm.[2] <- str + pm.[2]
 
                        | _ -> failwith "Wrong code"
+
         let (period,cs,hard,soft) = match semester with | Semester(p,(h,s),cs,_) -> (p,cs,h,s)
 
         cs |> Set.iter (fun e -> let name = sprintf "%s" e.CourseNo

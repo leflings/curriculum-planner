@@ -30,7 +30,7 @@ type Period =
     | June of string * (float * float)
 
 type Semester =
-    | Semester of Period * (Code list * Code list) * Set<Course> * string list // Period * (Hard constraints * Soft constraints) * Courses
+    | Semester of Period * (Code list * Code list) * Set<Course> * string list
 
 type MasterStudy =
     | MasterStudy of Semester list

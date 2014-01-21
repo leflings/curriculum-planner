@@ -6,28 +6,29 @@ open FileParser
 open Scheduler
 
 module Helpers = 
+    /// Generates a list of constraint combinations starting with all hard and soft constraints
+    /// then the all hard constraints and a subset of soft constraints. Last one is just the
+    /// hard constraints
     let consCombos (h,s) =
         let hard = List.map Encoding.toZCode h
         let soft = List.map Encoding.toZCode s |> allCombinations
-        List.map (List.append hard) soft
+        List.map ((@) hard) soft
 
     let rec findFirst (ls : seq<string list option> list) =
         match ls with
         | [] -> None
-        | x::xs ->
-            match Seq.head x with
-            | Some _ as t -> t
-            | None -> findFirst xs
+        | x::xs -> match Seq.head x with
+                   | Some _ as t -> t
+                   | None -> findFirst xs
 
     let filterCourses s cs =
-        let f =
-            match s with
-            | Semester (p,_,_,_) ->
-                match p with
-                | Spring _ -> (fun (e:Course) -> match e.Code with | F _ -> true | _ -> false)
-                | Fall _  -> (fun (e:Course) -> match e.Code with | E _ -> true | _ -> false)
-                | January _ -> (fun (e:Course) -> match e.Code with | Jan _ -> true | _ -> false)
-                | June _ -> (fun (e:Course) -> match e.Code with | Jun _ -> true | _ -> false)
+        let f = match s with
+                | Semester (p,_,_,_) ->
+                    match p with
+                    | Spring _ -> (fun (e:Course) -> match e.Code with | F _ -> true | _ -> false)
+                    | Fall _  -> (fun (e:Course) -> match e.Code with | E _ -> true | _ -> false)
+                    | January _ -> (fun (e:Course) -> match e.Code with | Jan _ -> true | _ -> false)
+                    | June _ -> (fun (e:Course) -> match e.Code with | Jun _ -> true | _ -> false)
         List.filter f cs
 
     let checkMandatory mset ls =
@@ -65,7 +66,8 @@ let planSemesters courselist semesters =
 
         // Makes a scheduler for all combinations of constraints. First in the list, is the one
         // With all constraints (soft and hard) fulfilled
-        let options = List.map scheduler (consCombos (Semester.getConstraints semester))
+        let options = let constraints = (consCombos (Semester.getConstraints semester))
+                      List.map scheduler constraints
 
         // The string list of course numbers of the first constraint combination that yielded a result
         let chosenNumbers = findFirst options |> function | Some x -> x | None -> []
@@ -79,8 +81,10 @@ let planSemesters courselist semesters =
         let completed' = Set.union completed (Set.ofList chosenNumbers)
         // Add the updated semester to the accumulator
         let acc' = (Semester.setCourses semester courses) :: acc
+
         (acc', (completed', eligible'', ineligible'))
 
-    let semesters' = List.fold planSemester ([], (Set.empty, woPrereqs, wPrereqs)) semesters
+    let semesters' = let acc = ([], (Set.empty, woPrereqs, wPrereqs))
+                     List.fold planSemester acc semesters
 
     fst semesters' |> List.rev

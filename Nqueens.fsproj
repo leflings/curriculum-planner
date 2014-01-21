@@ -68,8 +68,6 @@
     <Compile Include="Utils.fs" />
     <Compile Include="FileParser.fs" />
     <Compile Include="Scheduler.fs" />
-    <Compile Include="Nqueens.fs" />
-    <Compile Include="Program.fs" />
     <Compile Include="CurriculumPlanner.fs" />
     <Compile Include="Main.fs" />
     <None Include="big-with-prereqs.csv">
