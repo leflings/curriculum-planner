@@ -25,7 +25,9 @@ type Period =
     | Fall of string * (float * float)
     | January of string * (float * float)
     | June of string * (float * float)
+
 type Semester =
     | Semester of Period * (Code list * Code list) * Set<Course> // Period * (Hard constraints * Soft constraints) * Courses
+
 type MasterStudy =
     | MasterStudy of Semester list

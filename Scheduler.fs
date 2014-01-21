@@ -64,6 +64,7 @@ module Helpers =
 
 open Helpers
 let schedule courselist (minECTS, maxECTS) constraints =
+//    if List.isEmpty courselist then seq[[]] else
     let sum = ctx.MkIntConst("ectssum")
     let cs = courses courselist
     let solver = ctx.MkSolver()
@@ -72,7 +73,7 @@ let schedule courselist (minECTS, maxECTS) constraints =
     solver.Assert(checkConstraints cs constraints)
     solver.Assert(checkCourses cs)
     solver.Assert(ctx.MkEq(sum, ctx.MkAdd(Array.map ectsContribution cs)))
-    solver.Assert(ctx.MkAnd(ctx.MkLe(ctx.MkInt(toZECTS minECTS), sum), ctx.MkLe(sum, ctx.MkInt(toZECTS maxECTS))))
+    solver.Assert(ctx.MkAnd(ctx.MkLe(ctx.MkInt(Encoding.toZECTS minECTS), sum), ctx.MkLe(sum, ctx.MkInt(Encoding.toZECTS maxECTS))))
 
     let yielder _ =
         match solver.Check() with

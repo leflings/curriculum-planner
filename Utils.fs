@@ -14,96 +14,116 @@ let rec combinations xs i =
 
 let allCombinations xs = [] :: [ for i in 1..(List.length xs) do yield! combinations xs i ] |> List.rev
 
-let toZECTS (f:float) = int (f/2.5)
+module Encoding =
+    let toZECTS (f:float) = int (f/2.5)
 
-let fromZECTS i = float(i)*2.5
+    let fromZECTS i = float(i)*2.5
 
-let toCode (str : string) = 
-    let code (s:string) =
-        let i = s.Substring(1,1) |> Convert.ToInt32
-        let p = s.Substring(2) |> function | "A" -> A | "B" -> B | _ -> X
-        (i,p)
-    match str.[0] with
-    | 'F' -> F (code str)
-    | 'E' -> E (code str)
-    | _ -> failwithf "unrecognized code: %s" str
+    let toCode (str : string) = 
+        let code (s:string) =
+            let i = s.Substring(1,1) |> Convert.ToInt32
+            let p = s.Substring(2) |> function | "A" -> A | "B" -> B | _ -> X
+            (i,p)
+        match str.[0] with
+        | 'F' -> F (code str)
+        | 'E' -> E (code str)
+        | _ -> failwithf "unrecognized code: %s" str
 
 
-let toZCode (c:Code) =
-    match c with
-    | E(i, p) | F(i, p) ->
-        match p with
-        | A -> i
-        | B -> -i
-        | X -> i*10
-
-let fromZCode i =
-    if i >= 10
-    then
-        F(i/10, X)
-    else
-        F(i, if i > 0 then A else B)
-
-let fromCode c =
-    let period = function | A -> "A" | B -> "B" | X -> ""
-    match c with
-    | F(i,p) -> sprintf "F%d%s" i (period p)
-    | E(i,p) -> sprintf "E%d%s" i (period p)
-
-let toNumber (s:string) = Convert.ToInt32(s)
-let fromNumber i = sprintf "%05d" i
-
-let toZCourse (a : Course) = { ZNo = toNumber a.CourseNo; ZCode = toZCode a.Code; ZECTS = toZECTS a.ECTS }
-let fromZCourse (a : ZCourse) = { CourseNo = fromNumber a.ZNo; CourseName = ""; Code = fromZCode a.ZCode; ECTS = fromZECTS a.ZECTS; Prereqs= [] }
-
-let toZEncoding xs = List.map toZCourse xs
-let fromZEncoding xs = List.map fromZCourse xs
-
-let getSemesterName (s : Semester) = match s with | Semester(p,_,_) -> match p with | Spring(n,_) | Fall(n,_) | January(n,_) | June(n,_) -> n
-
-let printSemester (semester : Semester) = 
-    let am = Array.init 5 (fun _ -> "")
-    let pm = Array.init 5 (fun _ -> "")
-    let setFromCode name c =
+    let toZCode (c:Code) =
         match c with
-        | F(i,p) | E(i,p) ->
+        | E(i, p) | F(i, p) ->
             match p with
-            | A -> if i % 2 <> 0
-                   then am.[i/2] <- name
-                   else pm.[i/3] <- name
-            | B -> match i with
-                   | 1 -> am.[3] <- name
-                   | 2 -> pm.[3] <- name
-                   | 3 -> am.[4] <- name
-                   | 4 -> pm.[4] <- name
-                   | 5 -> pm.[2] <- name
-                   | _ -> failwith "Wrong code"
-            | X -> match i with
-                   | 1 -> am.[0] <- name; pm.[3] <- name
-                   | 2 -> pm.[0] <- name; am.[3] <- name
-                   | 3 -> am.[1] <- name; am.[4] <- name
-                   | 4 -> pm.[1] <- name; pm.[4] <- name
-                   | 5 -> am.[2] <- name; pm.[2] <- name
-                   | _ -> failwith "Wrong code"
-    let (cs,hard,soft) = match semester with | Semester(_,(h,s),cs) -> (cs,h,s)
-    cs |> Set.iter (fun e -> let name = sprintf "%s" e.CourseNo
-                             setFromCode name e.Code )
-    hard |> List.iter (setFromCode "XXX")
-    soft |> List.iter (setFromCode "+++")
-    let cw = 11
-    let filler = String.replicate cw "-"
-    let format s = Printf.TextWriterFormat<string -> string -> string -> string -> string -> string -> unit>(s)
-    let delimiterPattern =
-        let f = String.replicate cw "-"
-        (String.replicate 6 ("+"+f)) + "+"
-    let linePattern = (String.replicate 6 ("| %"+ string(cw-2) + "s ")) + "|"
-    printfn "\n%s" ((getSemesterName semester).ToUpper())
-    printfn "%s" delimiterPattern
-    printfn (format linePattern) "" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday"
-    printfn "%s" delimiterPattern
-    printfn (format linePattern) "8-12" am.[0] am.[1] am.[2] am.[3] am.[4]
-    printfn "%s" delimiterPattern
-    printfn (format linePattern) "12-13" "" "" "" "" ""
-    printfn "%s" delimiterPattern
-    printfn (format linePattern) "13-17" pm.[0] pm.[1] pm.[2] pm.[3] pm.[4]
-    printfn "%s" delimiterPattern
+            | A -> i
+            | B -> -i
+            | X -> i*10
+
+    let fromZCode i =
+        if i >= 10
+        then
+            F(i/10, X)
+        else
+            F(i, if i > 0 then A else B)
+
+    let fromCode c =
+        let period = function | A -> "A" | B -> "B" | X -> ""
+        match c with
+        | F(i,p) -> sprintf "F%d%s" i (period p)
+        | E(i,p) -> sprintf "E%d%s" i (period p)
+
+    let toNumber (s:string) = Convert.ToInt32(s)
+    let fromNumber i = sprintf "%05d" i
+
+    let toZCourse (a : Course) = { ZNo = toNumber a.CourseNo; ZCode = toZCode a.Code; ZECTS = toZECTS a.ECTS }
+    let fromZCourse (a : ZCourse) = { CourseNo = fromNumber a.ZNo; CourseName = ""; Code = fromZCode a.ZCode; ECTS = fromZECTS a.ZECTS; Prereqs= [] }
+
+    let toZEncoding xs = List.map toZCourse xs
+    let fromZEncoding xs = List.map fromZCourse xs
+
+module Semester =
+    let getECTS = function | Semester(p,_,_) -> match p with | Spring(_,e) | Fall(_,e) | June(_,e) | January(_,e) -> e
+    let getConstraints = function | Semester(_,c,_) -> c
+
+    let setCourses s cs = match s with | Semester(p,c,_) -> Semester(p,c,cs) 
+
+    let isFilled s =
+        let (el, eh) = getECTS s
+        let sum = match s with | Semester(_,_,s) -> s |> Set.toSeq |> Seq.sumBy (fun e -> e.ECTS)
+        el <= sum && sum <= eh
+    let getName (s : Semester) = match s with | Semester(p,_,_) -> match p with | Spring(n,_) | Fall(n,_) | January(n,_) | June(n,_) -> n
+
+    let printSemester (semester : Semester) = 
+        let am = Array.init 5 (fun _ -> "")
+        let pm = Array.init 5 (fun _ -> "")
+        let setFromCode str c =
+            match c with
+            | F(i,p) | E(i,p) ->
+                match p with
+                | A -> if i % 2 <> 0
+                       then am.[i/2] <- str + am.[i/2]
+                       else pm.[i/3] <- str + pm.[i/3]
+                | B -> match i with
+                       | 1 -> pm.[3] <- str + pm.[3]
+                       | 2 -> am.[3] <- str + am.[3]
+                       | 3 -> am.[4] <- str + am.[4]
+                       | 4 -> pm.[4] <- str + pm.[4]
+                       | 5 -> pm.[2] <- str + pm.[2]
+                       | _ -> failwith "Wrong code"
+                | X -> match i with
+                       | 1 -> am.[0] <- str + am.[0]; pm.[3] <- str + pm.[3]
+                       | 2 -> pm.[0] <- str + pm.[0]; am.[3] <- str + am.[3]
+                       | 3 -> am.[1] <- str + am.[1]; am.[4] <- str + am.[4]
+                       | 4 -> pm.[1] <- str + pm.[1]; pm.[4] <- str + pm.[4]
+                       | 5 -> am.[2] <- str + am.[2]; pm.[2] <- str + pm.[2]
+
+                       | _ -> failwith "Wrong code"
+        let (period,cs,hard,soft) = match semester with | Semester(p,(h,s),cs) -> (p,cs,h,s)
+
+        match period with
+        | Spring _ | Fall _ ->
+            cs |> Set.iter (fun e -> let name = sprintf "%s" e.CourseNo
+                                     setFromCode name e.Code )
+            hard |> List.iter (setFromCode "H ")
+            soft |> List.iter (setFromCode "S ")
+        | June _ | January _ ->
+            cs |> Set.iter (fun e -> Array.fill am 0 5 e.CourseNo) 
+            cs |> Set.iter (fun e -> Array.fill pm 0 5 e.CourseNo) 
+
+        let cw = 11
+        let filler = String.replicate cw "-"
+        let delimiterPattern =
+            let f = String.replicate cw "-"
+            (String.replicate 6 ("+"+f)) + "+"
+        let linePattern = 
+            let s = (String.replicate 6 ("| %"+ string(cw-2) + "s ")) + "|"
+            Printf.TextWriterFormat<string -> string -> string -> string -> string -> string -> unit>(s)
+        printfn "\n%s" ((getName semester).ToUpper())
+        printfn "%s" delimiterPattern
+        printfn linePattern "" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday"
+        printfn "%s" delimiterPattern
+        printfn linePattern "8-12" am.[0] am.[1] am.[2] am.[3] am.[4]
+        printfn "%s" delimiterPattern
+        printfn linePattern "12-13" "" "" "" "" ""
+        printfn "%s" delimiterPattern
+        printfn linePattern "13-17" pm.[0] pm.[1] pm.[2] pm.[3] pm.[4]
+        printfn "%s" delimiterPattern

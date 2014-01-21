@@ -3,6 +3,7 @@
 open System
 open Types
 open Utils
+open Utils.Encoding
 
 let readlines filename = System.IO.File.ReadAllLines(filename) |> List.ofArray
 
@@ -18,7 +19,13 @@ let convert (lines : string list) =
                     |> function
                     | [|cno; n; p; e|] ->
                         let ects = Convert.ToDouble(e)
-                        { CourseNo = cno; CourseName = n; Code = (toCode p); ECTS = ects; Prereqs = [] }
+                        {
+                          CourseNo = cno;
+                          CourseName = n;
+                          Code = (toCode p);
+                          ECTS = ects;
+                          Prereqs = []
+                        }
                     | _ -> failwith "incorrect format")
 
 let convertWithPrereqs (lines : string list) =
@@ -28,7 +35,13 @@ let convertWithPrereqs (lines : string list) =
                     |> function
                     | [|cno; n; p; e; pre|] ->
                         let ects = Convert.ToDouble(e)
-                        { CourseNo = cno; CourseName = n; Code = (toCode p); ECTS = ects; Prereqs = pre.Split([|';'|]) |> List.ofArray |> List.filter (not << String.IsNullOrWhiteSpace) }
+                        {
+                          CourseNo = cno;
+                          CourseName = n;
+                          Code = (toCode p);
+                          ECTS = ects;
+                          Prereqs = pre.Split([|';'|]) |> List.ofArray |> List.filter (not << String.IsNullOrWhiteSpace)
+                        }
                     | _ -> failwith "incorrect format")
         
 let readFromFile = readlines >> cleanlines >> convert
@@ -41,5 +54,5 @@ let readConstraints filename =
         |> Array.toList
         |> List.map (fun e -> e.Split([|','|]) |> Array.toList |> List.map ((fun s -> s.Trim()) >> toCode))
     match lines with
-    | [no; maybes] -> (no,maybes)
+    | [hard; soft] -> (hard,soft)
     | _ -> failwith "incorrect constraints format"
