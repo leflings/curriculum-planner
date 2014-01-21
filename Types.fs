@@ -20,7 +20,8 @@ type Course =
 
 type ZCourse = { ZNo: int;
                 ZCode: int;
-                ZECTS: int } 
+                ZECTS: int;
+                ZMandatory: bool } 
 
 type Period =
     | Spring of string * (float * float)
@@ -29,7 +30,7 @@ type Period =
     | June of string * (float * float)
 
 type Semester =
-    | Semester of Period * (Code list * Code list) * Set<Course> // Period * (Hard constraints * Soft constraints) * Courses
+    | Semester of Period * (Code list * Code list) * Set<Course> * string list // Period * (Hard constraints * Soft constraints) * Courses
 
 type MasterStudy =
     | MasterStudy of Semester list

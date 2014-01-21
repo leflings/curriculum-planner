@@ -60,23 +60,31 @@ module Encoding =
     let toNumber (s:string) = Convert.ToInt32(s)
     let fromNumber i = sprintf "%05d" i
 
-    let toZCourse (a : Course) = { ZNo = toNumber a.CourseNo; ZCode = toZCode a.Code; ZECTS = toZECTS a.ECTS }
+    let toZCourse (a : Course) = { ZNo = toNumber a.CourseNo; ZCode = toZCode a.Code; ZECTS = toZECTS a.ECTS; ZMandatory = false }
     let fromZCourse (a : ZCourse) = { CourseNo = fromNumber a.ZNo; CourseName = ""; Code = fromZCode a.ZCode; ECTS = fromZECTS a.ZECTS; Prereqs= [] }
 
     let toZEncoding xs = List.map toZCourse xs
     let fromZEncoding xs = List.map fromZCourse xs
 
-module Semester =
-    let getECTS = function | Semester(p,_,_) -> match p with | Spring(_,e) | Fall(_,e) | June(_,e) | January(_,e) -> e
-    let getConstraints = function | Semester(_,c,_) -> c
+    let isClash a b = a = b || 10 = abs ((max a b)/(min a b))
+    let countClashes cmap maybeConstraints selection =
+        List.fold
+            (fun acc e ->
+                let zc = (Map.find e cmap).Code |> toZCode
+                if List.exists (isClash zc) maybeConstraints then acc + 1 else acc) 0 selection
 
-    let setCourses s cs = match s with | Semester(p,c,_) -> Semester(p,c,cs) 
+module Semester =
+    let getECTS = function | Semester(p,_,_,_) -> match p with | Spring(_,e) | Fall(_,e) | June(_,e) | January(_,e) -> e
+    let getConstraints = function | Semester(_,c,_,_) -> c
+    let getMandatory = function | Semester(_,_,_,m) -> m
+    let getCourses = function | Semester(_,_,cs,_) -> cs
+    let setCourses s cs = match s with | Semester(p,c,_,m) -> Semester(p,c,cs,m) 
+    let getName (s : Semester) = match s with | Semester(p,_,_,_) -> match p with | Spring(n,_) | Fall(n,_) | January(n,_) | June(n,_) -> n
 
     let isFilled s =
         let (el, eh) = getECTS s
-        let sum = match s with | Semester(_,_,s) -> s |> Set.toSeq |> Seq.sumBy (fun e -> e.ECTS)
+        let sum = match s with | Semester(_,_,s,_) -> s |> Set.toSeq |> Seq.sumBy (fun e -> e.ECTS)
         el <= sum && sum <= eh
-    let getName (s : Semester) = match s with | Semester(p,_,_) -> match p with | Spring(n,_) | Fall(n,_) | January(n,_) | June(n,_) -> n
 
     let printSemester (semester : Semester) = 
         let am = Array.init 5 (fun _ -> "")
@@ -105,14 +113,14 @@ module Semester =
                        | 5 -> am.[2] <- str + am.[2]; pm.[2] <- str + pm.[2]
 
                        | _ -> failwith "Wrong code"
-        let (period,cs,hard,soft) = match semester with | Semester(p,(h,s),cs) -> (p,cs,h,s)
+        let (period,cs,hard,soft) = match semester with | Semester(p,(h,s),cs,_) -> (p,cs,h,s)
 
         cs |> Set.iter (fun e -> let name = sprintf "%s" e.CourseNo
                                  setFromCode name e.Code )
         hard |> List.iter (setFromCode "H ")
         soft |> List.iter (setFromCode "S ")
 
-        let cw = 11
+        let cw = 12
         let filler = String.replicate cw "-"
         let delimiterPattern =
             let f = String.replicate cw "-"
@@ -125,8 +133,8 @@ module Semester =
         printfn linePattern "" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday"
         printfn "%s" delimiterPattern
         printfn linePattern "8-12" am.[0] am.[1] am.[2] am.[3] am.[4]
-        printfn "%s" delimiterPattern
-        printfn linePattern "12-13" "" "" "" "" ""
+//        printfn "%s" delimiterPattern
+//        printfn linePattern "12-13" "" "" "" "" ""
         printfn "%s" delimiterPattern
         printfn linePattern "13-17" pm.[0] pm.[1] pm.[2] pm.[3] pm.[4]
         printfn "%s" delimiterPattern

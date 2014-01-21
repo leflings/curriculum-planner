@@ -22,7 +22,7 @@ module Helpers =
     let filterCourses s cs =
         let f =
             match s with
-            | Semester (p,_,_) ->
+            | Semester (p,_,_,_) ->
                 match p with
                 | Spring _ -> (fun (e:Course) -> match e.Code with | F _ -> true | _ -> false)
                 | Fall _  -> (fun (e:Course) -> match e.Code with | E _ -> true | _ -> false)
@@ -30,12 +30,19 @@ module Helpers =
                 | June _ -> (fun (e:Course) -> match e.Code with | Jun _ -> true | _ -> false)
         List.filter f cs
 
-
+    let checkMandatory mset ls =
+        if Set.isEmpty mset then ls else
+        List.map (fun e -> 
+                    if Set.contains (Encoding.fromNumber e.ZNo) mset
+                    then
+                        { ZNo = e.ZNo;
+                          ZECTS = e.ZECTS;
+                          ZCode = e.ZCode;
+                          ZMandatory = true }
+                    else e ) ls
 
 open Helpers
-let planSemesters semesters =
-//    let courselist = readFromFile "small.csv"
-    let courselist = readFromFileWithPrereqs "big-with-prereqs.csv"
+let planSemesters courselist semesters =
     let coursemap = courselist |> List.map (fun e -> (e.CourseNo, e)) |> Map.ofList
     let courseset = courselist |> Set.ofList
     let (woPrereqs, wPrereqs) = courseset |> Set.partition (fun e -> e.Prereqs = [])
@@ -48,7 +55,11 @@ let planSemesters semesters =
             (Set.union a eligible, b)
 
         // Bake in arguments for the scheduler
-        let scheduler = let cs = Set.toList eligible' |> filterCourses semester |> Encoding.toZEncoding
+        let scheduler = let mset = Semester.getMandatory semester |> Set.ofList
+                        let cs = Set.toList eligible'
+                                 |> filterCourses semester 
+                                 |> Encoding.toZEncoding
+                                 |> checkMandatory mset
                         let ectsMinMax = (Semester.getECTS semester)
                         schedule cs ectsMinMax
 

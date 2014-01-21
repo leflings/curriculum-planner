@@ -36,9 +36,13 @@ module Helpers =
     let courses (zs : ZCourse list) = [| for z in zs -> ctx.MkConst(sprintf "C%d" z.ZNo, cSort) |]
 
     let setCourse course (zc : ZCourse) =
-        let setField (course:Expr) (field : Expr -> ArithExpr) (i:int) = ctx.MkEq(ctx.MkInt(i), field course)
+        let setField (course:Expr) field (i:int) = ctx.MkEq(ctx.MkInt(i), field course)
         let setter = setField course
-        List.map2 (fun f v -> setter f v) [number; ects; code] [zc.ZNo; zc.ZECTS; zc.ZCode] |> List.toArray
+        let s = List.map2 (fun f v -> setter f v) [number; ects; code] [zc.ZNo; zc.ZECTS; zc.ZCode]
+        if zc.ZMandatory
+        then (ctx.MkEq(ctx.MkTrue(), incl course)) :: s
+        else s
+        |> List.toArray
 
     let setCourses (courses : Expr []) (cs : ZCourse list) = 
         let comb = Array.zip courses (Array.ofList cs)
@@ -85,7 +89,7 @@ let schedule courselist (minECTS, maxECTS) constraints =
                             if b then yield sprintf "%05d" n else () ]
             let assignments = [| for c in cs -> ctx.MkEq(c, m.Evaluate(c, true)) |]
             solver.Assert(ctx.MkNot(ctx.MkAnd assignments))
-            printfn "%A" chosen
+            //printfn "%A" chosen
             Some chosen
         | _ -> None
     Seq.cache (Seq.initInfinite yielder)
