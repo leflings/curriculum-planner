@@ -10,7 +10,7 @@
     <RootNamespace>Nqueens</RootNamespace>
     <AssemblyName>Nqueens</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>Nqueens</Name>
+    <Name>Project3</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
